@@ -1,0 +1,21 @@
+# Maven build container 
+FROM maven:3.8.5-openjdk-8 AS maven_build
+COPY pom.xml /build/
+COPY src /build/src/
+WORKDIR /build/
+RUN mvn package
+
+
+#pull base image
+FROM openjdk:8
+
+#copy docker image from builder image
+COPY --from=maven_build /build/target/deeps-basic-website.jar /deeps-basic-website.jar
+
+#default command
+CMD java -jar /simple-pullup-tracker.jar
+
+#maintainer 
+MAINTAINER 
+#expose port 8080
+EXPOSE 8080
